@@ -1,0 +1,72 @@
+/* Wrapper to center content */
+.login-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e1e1e; /* matches dark theme */
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Box */
+.login-box {
+  background: #2b2b2b;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.4);
+  width: 350px;
+  text-align: center;
+}
+
+/* Title */
+.login-box h2 {
+  color: #f5f5f5;
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs */
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 6px;
+  background: #3a3a3a;
+  color: white;
+  outline: none;
+  font-size: 14px;
+}
+
+.login-box input:focus {
+  border: 1px solid #4cafef;
+  background: #444;
+}
+
+/* Button */
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 12px;
+  background: #4cafef;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-box button:hover {
+  background: #42a1e0;
+}
+
+/* Messages */
+.error {
+  color: #ff4d4d;
+  margin-top: 10px;
+}
+
+.success {
+  color: #4caf50;
+  margin-top: 10px;
+}
