@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Profile</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container form-container">
+    <h3 class="text-center mb-4">Edit Your Profile</h3>
+
+    <form action="/updateAdminProfile" method="POST">
+      <input type="hidden" name="id" value="<%= admin.user_id %>">
+
+      <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= admin.user_name %>" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= admin.user_email %>" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Update Profile</button>
+    </form>
+  </div>
+</body>
+</html>

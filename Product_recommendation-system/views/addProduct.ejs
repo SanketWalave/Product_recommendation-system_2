@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Product</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h2 class="mb-4">Add New Product</h2>
+
+    <form action="/addProduct_2" method="POST" enctype="multipart/form-data">
+      <!-- Product Name -->
+      <div class="mb-3">
+        <label for="product_name" class="form-label">Product Name</label>
+        <input type="text" class="form-control" id="product_name" name="product_name" required>
+      </div>
+
+      <!-- Product Image -->
+      <div class="mb-3">
+        <label for="product_image" class="form-label">Product Image</label>
+        <input type="file" class="form-control" id="product_image" name="product_image" accept="image/*" required>
+      </div>
+
+      <!-- Subcategory ID -->
+      <div class="mb-3">
+                  <label for="subcategory_id" class="form-label"
+                    >Select Category</label
+                  >
+                  <select
+                    name="subcategory_id"
+                    id="category"
+                    class="form-select"
+                    required
+                  >
+                    <option value="" disabled selected>
+                      -- Select Category --
+                    </option>
+
+                    <% if (subcategory && subcategory.length > 0) { %> <%
+                    subcategory.forEach(cat => { %>
+                    <option value="<%= cat.subcategory_id %>">
+                      <%= cat.subcategory_name %>
+                    </option>
+                    <% }) %> <% } else { %>
+                    <option disabled>No subcategory available</option>
+                    <% } %>
+                  </select>
+                </div>
+
+      <!-- Brand -->
+      <div class="mb-3">
+        <label for="brand" class="form-label">Brand</label>
+        <input type="text" class="form-control" id="brand" name="brand" required>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label for="destcription" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="destcription" rows="3"></textarea>
+      </div>
+
+      <!-- Stock Unit -->
+       <!-- enum('kg','pices','liter') -->
+      <div class="mb-3">
+        <label for="stock_unit" class="form-label">Stock Unit</label>
+        <select class="form-select" id="stock_unit" name="stock_unit" required>
+          <option value="" disabled selected>Select unit</option>
+          <option value="kg">Kg</option>
+          <option value="pices">Pieces</option>
+          <option value="liter">Liter</option>
+        </select>
+      </div>
+
+      <!-- Stock -->
+      <div class="mb-3">
+        <label for="stock" class="form-label">Stock</label>
+        <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+      </div>
+
+      <!-- Price -->
+      <div class="mb-3">
+        <label for="price" class="form-label">Price (₹)</label>
+        <input type="number" step="0.01" class="form-control" id="price" name="price" min="1" max="999999" required>
+      </div>
+
+      <!-- Discount -->
+      <div class="mb-3">
+        <label for="discount" class="form-label">Discount (%)</label>
+        <input type="number" step="1" class="form-control" id="discount" name="discount" min="0" max="100" placeholder="0-100%">
+      </div>
+
+      <!-- Organic -->
+      <div class="mb-3">
+        <label for="organic" class="form-label">Organic (1 for Yes, 0 for No)</label>
+        <input type="number" class="form-control" id="organic" name="organic" min="0" max="1" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

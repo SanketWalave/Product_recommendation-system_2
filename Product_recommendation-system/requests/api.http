@@ -1,0 +1,105 @@
+### Delete user by email and password
+### Delete user by email and password
+# POST http://localhost:3000/userlogin
+# Content-Type: application/json
+
+# {
+#   "user_email": "user@123",
+#   "password": "1234"
+# }
+
+# {
+#   "user_email": "don@123",
+#   "password": "1234"
+# }
+
+
+# POST http://localhost:3000/addCategoryPost
+# Content-Type: application/json
+
+# {
+#   "category_name": "dfgwgghsv",
+#   "description": "Devices and gadgets"
+# }
+
+#  GET http://localhost:3000/getSubCategoriesNameId
+#  Content-Type: application/json
+
+
+# GET http://localhost:3000/deleteCatagoryById?id=14
+
+#  GET http://localhost:3000/updateCatagoryGetById?id=15
+
+
+# POST http://localhost:3000/updateCatagoryPost
+# Content-Type: application/json
+
+# {
+#   "category_name": "Electronics2",
+#   "description": "Devices and gadgets",
+#   "category_id": "10"
+# }
+
+
+# POST http://localhost:3000/addSubCategory
+# Content-Type: application/json
+
+# {
+#   "subcategory_name": "Food",
+#   "category_id": "10"
+# }
+
+# GET http://localhost:3000/addSubCategoryGet
+# Content-Type: application/json
+
+
+
+# GET http://localhost:3000/viewSubCategory
+# Content-Type: application/json
+
+
+# GET http://localhost:3000/deleteSubCategoryById?id=10
+# Content-Type: application/json
+
+# GET http://localhost:3000/updateSubCategoryGetById?id=5
+# Content-Type: application/json
+
+
+# POST http://localhost:3000/updateSubCategoryPost
+# Content-Type: application/json
+
+# {
+#   "subCategoryId": "1",
+#   "subCategoryName": "SghwefgugsyukgukfygYUGries",
+#   "category_id": "12"
+# }
+
+
+
+# POST http://localhost:3000/registerUser
+# Content-Type: application/json
+
+# {
+#   "username": "user",
+#   "useremail": "user@123",
+#   "userpassword": "1234",
+#   "usertype": "user"
+# }
+
+
+
+
+POST http://localhost:3000/userlogin
+Content-Type: application/json
+
+{
+  "email": "don@123",
+  "password": "1234"
+}
+
+# GET http://localhost:3000/deleteProduct?product_id=28
+# Content-Type: application/json
+# # Authorization: Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidW5hbWUiOiJkb24iLCJlbWFpbCI6ImRvbkAxMjMiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTY3MTczMzUsImV4cCI6MTc1NjcyMDkzNX0.gUlPvE0vTbAU7fWkJ-g-0Y_v55k1P3FNPqk0U4zyaHo
+
+
+
