@@ -87,20 +87,30 @@ const upload = multer({ storage: storage });
 // Routes
 router.get("/", controller.homePage);
 
-router.post("/userlogin", controller.userLogin);
+// done 
+router.post("/userlogin", controller.userLogin);   
+// done
 router.post("/registerUser", controller.registerUser);
+//done
 router.post("/registerAdmin",verifyToken, verifyAdmin, controller.registerAdmin);
 
-// ✅ Protected routes
+// ✅ Protected routes done
 router.get("/getUserByToken", verifyToken, controller.getUserByToken);
-router.get("/deleteuserbyEmailAnsPassword", verifyToken, controller.deleteUserbyEmailAnsPassword);
+// done but password varification problem 
+router.post("/deleteuserbyEmailAnsPassword", verifyToken, controller.deleteUserbyEmailAnsPassword);
+// done 
 router.get("/updateUserInfo", verifyToken, controller.updateUserInfo);
 
-router.get("/adminProfile", verifyToken, verifyAdmin, controller.adminProfile);
-router.get("/editAdminProfile", verifyToken, verifyAdmin, controller.editAdminProfile);
+// router.get("/adminProfile", verifyToken, verifyAdmin, controller.adminProfile);
+// router.get("/editAdminProfile", verifyToken, verifyAdmin, controller.editAdminProfile);
+// done 
 router.post("/updateAdminProfile", verifyToken, verifyAdmin, controller.updateAdminProfile);
-
+// done 
+router.post("/updateUserProfile", verifyToken, verifyAdmin, controller.updateUserProfile);
+// verifyToken, verifyAdmin,
+// done
 router.get("/viewUsers", verifyToken, verifyAdmin, controller.viewUsers);
+// done 
 router.get("/viewAdmin", verifyToken, verifyAdmin, controller.viewAdmin);
 
 export default router;

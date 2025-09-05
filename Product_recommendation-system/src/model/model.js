@@ -45,26 +45,24 @@ export const registerUser = (user_name, user_email, user_password, user_type) =>
 };
 
 // Delete User By ID
-export const deleteUserbyEmailAnsPassword = (user_email,password) => {
+export const deleteUserbyEmailAnsPassword = (user_email,user_id) => {
     console.log("Delete called");
     console.log("user_email:", user_email);
-    console.log("password:", password);
-    return new Promise((resolve, reject) => {
-        db.query("DELETE FROM user WHERE user_email = ? AND password = ?",[user_email,password],(err,result)=>{
-            if (err) {
-                console.error("Error deleting user:", err);
-                reject("Error deleting user: " + err);
-            } else {
-                // console.log("User deleted successfully:", result);
-                // resolve(result); // e.g., { affectedRows: 1 }
-                if(result.affectedRows>0){
-                    resolve(result);
-                }else{
-                    resolve("no data");
-                }
-            }
-        });
+    console.log("password:", user_id);
+   return new Promise((resolve, reject) => {
+    db.query("DELETE FROM user WHERE user_email = ?", [user_email], (err, result) => {
+      if (err) {
+        console.error("Error deleting user:", err);
+        reject("Error deleting user: " + err);
+      } else {
+        if (result.affectedRows > 0) {
+          resolve(result);
+        } else {
+          resolve("no data"); // 👈 handled in controller
+        }
+      }
     });
+  });
 };
 
 export const userLogin=(user_email,password) => {
@@ -101,11 +99,26 @@ export const userLogin=(user_email,password) => {
 // };
 
 // Inside your model.js (or whatever model file)
-export const updateAdminProfile = (id, name, email) => {
-    console.log(id+"     "+ name+"     "+email);
+export const updateAdminProfile = ( user_id, user_name, user_email) => {
+    console.log(user_id+"     "+ user_name+"     "+user_email);
     return new Promise((resolve, reject) => {
         const sql = "UPDATE user SET user_name = ?, user_email = ? WHERE user_id = ?";
-        db.query(sql, [name, email, id], (err, result) => {
+        db.query(sql, [ user_name, user_email,user_id], (err, result) => {
+            if (err) {
+                console.error("Error updating user:", err);
+                reject(err);
+            } else {
+                console.log("User updated successfully:", result);
+                resolve(result);
+            }
+        });
+    });
+};
+export const updateUserProfile = ( user_id, user_name, user_email) => {
+    console.log(user_id+"     "+ user_name+"     "+user_email);
+    return new Promise((resolve, reject) => {
+        const sql = "UPDATE user SET user_name = ?, user_email = ? WHERE user_id = ?";
+        db.query(sql, [ user_name, user_email,user_id], (err, result) => {
             if (err) {
                 console.error("Error updating user:", err);
                 reject(err);
@@ -117,10 +130,23 @@ export const updateAdminProfile = (id, name, email) => {
     });
 };
 
-
 export const viewUsers = () => {
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM user";
+        const sql = `SELECT * FROM user where user_type='user'`;
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.error("Error fetching users:", err);
+                reject(err);
+            } else {
+                console.log("Users fetched successfully:", result);
+                resolve(result);
+            }
+        });
+    });
+}
+export const viewAdmin = () => {
+    return new Promise((resolve, reject) => {
+        const sql = `SELECT * FROM user where user_type='admin'`;
         db.query(sql, (err, result) => {
             if (err) {
                 console.error("Error fetching users:", err);

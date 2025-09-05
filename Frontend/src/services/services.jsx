@@ -82,7 +82,54 @@ export const getUserByToken = () => {
 };
 
 export const deletProductById = (product_id) => {
+  
   return api.get("/deleteProduct", {
-    params: { product_id }, // ?product_id=12
+    params: { product_id },
   });
 };
+
+
+export const getProductDetailsById=(product_id)=>{
+  alert("in services id"+product_id);
+  return api.get("/getProductDetailsById", {
+    params: { product_id },
+  });
+}
+
+export const updateProductPost=(data)=>{
+  return api.post("/updateProductPost", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+}
+export const registerUser=(formData)=>{
+    return api.post("/registerUser",formData);
+}
+export const registerAdmin=(formData)=>{
+    return api.post("/registerAdmin",formData);
+}
+
+
+export const getAdmin=()=>{
+   return api.get("/viewAdmin");
+}
+export const updateAdminProfile=(data)=>{
+  return api.post("updateAdminProfile",data)
+   
+}
+export const deleteAdmin=(data)=>{
+  return   api.post("/deleteUserbyEmailAnsPassword",data)
+}
+
+export const getUsers=()=>{
+   return api.get("/viewUsers");
+
+}
+export const updateUserProfile=(data)=>{
+  
+  return api.post("updateUserProfile",data)
+
+}
+export const deleteUser=(user_id)=>{
+  return api.get("")
+}

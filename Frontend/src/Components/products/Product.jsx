@@ -52,15 +52,49 @@ const Product = () => {
   const getFinalPrice = (price, discount) =>
     discount > 0 ? (price - (price * discount) / 100).toFixed(2) : price;
 
- const deleteProduct = (id) => {
+const deleteProduct = (id) => {
+  if (!confirm("Are you sure to delete this product?")) return;
+
   deletProductById(id)
     .then((res) => {
-      alert("Product deleted successfully!");
       console.log(res.data);
-      // refresh product list here
+      setProducts((prevProducts) =>
+        prevProducts.filter((p) => p.product_id !== id)
+      );
     })
     .catch((err) => console.error("Error deleting product:", err));
 };
+// const updateProduct = (id) => {
+//   if (!id) return alert("Invalid product ID");
+
+//   getProductDetailsById(id)
+//     .then((res) => {
+//       const [product] = res.data.data; // destructure first product from array
+//       if (!product) return alert("Product not found");
+
+//       const {
+//         product_name,
+//         brand,
+//         destcription,
+//         price,
+//          stock,
+//         stock_unit,
+//         discount,
+//         organic
+//       } = product;
+
+//       alert(
+//         `Name: ${product_name}\nBrand: ${brand}\nDescription: ${destcription}\nPrice: ₹${price}\nStock: ${stock} ${stock_unit}\nDiscount: ${discount}%\nOrganic: ${organic === 1 ? "Yes" : "No"}`
+//       );
+
+//       console.log("Fetched product:", product);
+//     })
+//     .catch((err) => console.error("Error fetching product:", err));
+// };
+const updateProduct = (id) => {
+  navigate(`/updateProduct/${id}`);
+};
+
 
 
   return (
@@ -155,9 +189,10 @@ const Product = () => {
                       >
                         Delete
                       </button>
-                      <button
+                     <button
                         className="btn btn-sm btn-warning"
-                        onClick={() => navigate(`/updateProduct/${p.product_id}`)}
+                        // onClick={deleteProduct(p.product_id)}
+                        onClick={()=>updateProduct(p.product_id)}
                       >
                         Update
                       </button>
@@ -208,7 +243,7 @@ const Product = () => {
                       </button>
                     <button
                       className="btn btn-sm btn-warning"
-                      onClick={() => navigate(`/updateProduct/${p.product_id}`)}
+                      onClick={() => updateProduct(p.product_id)}
                     >
                       Update
                     </button>

@@ -20,8 +20,8 @@ export const verifyToken = (req, res, next) => {
 
 // ✅ (Optional) Check for admin role
 export const verifyAdmin = (req, res, next) => {
-  if (req.user.role !== "admin") {
-    console.log(req.user.role);
+  if (req.user.urole !== "admin") {
+    console.log("role is "+req.user.urole);
     return res.status(403).json({ message: "Admins only" });
   }
   next();

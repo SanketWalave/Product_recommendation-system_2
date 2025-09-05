@@ -77,77 +77,110 @@ export const viewProducts = (req, res) => {
 };
 
 export const deleteProduct = (req, res) => {
-  // const product_id = req.params.id || req.query.did || (req.body && req.body.product_id);
-  const product_id = req.query;
-  console.log(product_id)
+  const product_id = req.query.product_id; // from frontend GET ?product_id=123
+
+  console.log("in delete product cont " + product_id);
+
   if (!product_id) {
     return res.status(400).send("Product ID is required");
   }
+
   productmodel.deleteProduct(product_id)
     .then(result => {
-      res.status(200).json({ message: "Products deleted successfully", data: products });
-    //  viewProducts(req, res); // Redirect to viewProducts after deletion
-     
+      res.status(200).json({
+        message: "Product deleted successfully",
+        data: result   // ✅ return DB result
+      });
     })
     .catch(err => {
+      console.error("Error deleting product:", err);
       res.status(500).send("Error deleting product");
     });
 };
 
 
+
 // GET: Render Update Form with existing product data
-export const updateProduct = (req, res) => {
-  const {
-    pid,
-    name,
-    description,
-    price,
-    image_url,
-    category_id,
-    discount,
-    stock_unit
-  } = req.query;
-  console.log("updateProduct called with data:", req.query);
-  res.render('updateProductForm', {
-    product: {
-      product_id: pid,
-      name,
-      description,
-      price,
-      image_url,
-      category_id,
-      discount,
-      stock_unit
-    }
-  });
-};
+// export const updateProduct = (req, res) => {
+//   const {
+//     pid
+//   } = req.query;
+//   console.log("updateProduct called with data:", req.query);
+//   res.render('updateProductForm', {
+//     product: {
+//       product_id: pid,
+//       name,
+//       description,
+//       price,
+//       image_url,
+//       category_id,
+//       discount,
+//       stock_unit
+//     }
+//   });
+// };
 
 // POST: Update the product in DB
-export const updateProductPost = (req, res) => {
-  console.log("updateProductPost called with data:", req.body);
-  const {
-    product_id,
-    name,
-    description,
-    price,
-    category_id,
-    discount,
-    stock_unit
-  } = req.body;
-
-  // Use existing image URL (hidden input)
-  const image = req.body.image_url || (req.file ? '/uploads/' + req.file.filename : null);
-
-  productmodel.updateProductPost(product_id, name, description, price, image, category_id, discount, stock_unit)
-    .then(result => {
-      // res.redirect("/viewProduct"); // change if your route is different
-     viewProducts(req, res); // Redirect to viewProducts after deletion
+export const getProductDetailsById = (req, res) => {
+   console.log("Query params:", req.query);
+  const product_id = req.query.product_id;
+  console.log("in controler to get product by id "+product_id);
+  
+  productmodel.getProductDetailsById(product_id)
+  .then(result => {
+      res.status(200).json({
+        message: "Product find successfully",
+        data: result
+      });
     })
     .catch(err => {
-      console.error("Error updating product:", err);
+      console.error("Error finding product:", err);
       res.status(500).send("Error updating product");
     });
 };
 
+export const updateProductPost = (req, res) => {
+  const {
+    product_id,
+    product_name,
+    subcategory_id,
+    brand,
+    destcription,
+    stock_unit,
+    stock,
+    price,
+    discount,
+    organic
+  } = req.body;
 
+  if (!product_id) {
+    return res.status(400).json({ message: "Product ID is required" });
+  }
 
+  // ✅ If file uploaded → use new image, else keep undefined
+  const product_image = req.file ? "/uploads/" + req.file.filename : undefined;
+
+  productmodel.updateProductPost(
+    product_id,
+    product_name,
+    product_image, // undefined if not uploaded
+    subcategory_id,
+    brand,
+    destcription,
+    stock_unit,
+    stock,
+    price,
+    discount,
+    organic
+  )
+    .then(result => {
+      res.status(200).json({
+        message: "Product updated successfully",
+        data: result
+      });
+    })
+    .catch(err => {
+      console.error("Error updating product:", err);
+      res.status(500).json({ message: "Error updating product", error: err });
+    });
+};

@@ -1,33 +1,49 @@
-import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./AdminDashboard.css";
+import { getUserByToken } from "../../services/services";
 
 const AdminDashboard = () => {
   const [openBox, setOpenBox] = useState(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login"); // no token = redirect
+      return;
+    }
+
+    // ✅ Always fetch user fresh from backend
+    getUserByToken(token)
+      .then((res) => {
+        console.log("User details:", res.data.user);
+        setUser(res.data.user);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching user:", err);
+        localStorage.removeItem("token"); // invalid token → logout
+        navigate("/login");
+      });
+  }, [token, navigate]);
 
   const toggleBox = (box) => {
     setOpenBox(openBox === box ? null : box);
   };
 
-  const navigate = useNavigate();
-
-  // ✅ Get user & token from localStorage
-  const token = localStorage.getItem("token");
-  const storedUser = localStorage.getItem("user");
-  const user = storedUser ? JSON.parse(storedUser) : null;
-
-  const location = useLocation();
-  const { data } = location.state || {}; // fallback if you passed state
-
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login"); // redirect to login
+    navigate("/login");
   };
 
-  // Get first letter of name
-  const profileLetter = user?.uname?.charAt(0)?.toUpperCase() || "U";
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <>
@@ -35,21 +51,19 @@ const AdminDashboard = () => {
       <nav className="navbar">
         <div className="navbar-left">
           <img
-            src="https://www.mystore.in/s/62ea2c599d1398fa16dbae0a/655cac71f149b81eece12fdc/51ceexg6d3l.jpg" // change this to your logo path
+            src="https://www.mystore.in/s/62ea2c599d1398fa16dbae0a/655cac71f149b81eece12fdc/51ceexg6d3l.jpg"
             alt="Logo"
             className="navbar-logo"
           />
         </div>
         <div className="navbar-right">
-      
-
           {/* Profile Dropdown */}
           <div className="profile-wrapper">
             <div
               className="profile-icon"
               onClick={() => setShowProfileMenu(!showProfileMenu)}
             >
-              {profileLetter}
+              {user?.uname?.charAt(0).toUpperCase() || "U"}
             </div>
 
             {showProfileMenu && (
@@ -65,17 +79,13 @@ const AdminDashboard = () => {
 
       {/* 🔹 Welcome Section */}
       <div className="welcome">
-        <h3>
-          Welcome {user ? user.uname : data?.data?.name || "Guest"} 👋
-        </h3>
+        <h3>Welcome {user?.uname} 👋</h3>
         <h3>Email: {user?.email}</h3>
-        <h3>Role: {user?.role}</h3>
-        <h3>Token: {token}</h3>
+        <h3>Role: {user?.urole}</h3>
       </div>
 
       {/* 🔹 Dashboard */}
       <div className="dashboard-container">
-        <h1 className="dashboard-title">Products</h1>
 
         <div className="dashboard-grid">
           {/* Box 1 */}
@@ -91,22 +101,22 @@ const AdminDashboard = () => {
 
           {/* Box 2 */}
           <div className="dashboard-box" onClick={() => toggleBox("box2")}>
-            <h2>Stores</h2>
+            <h2>Admins</h2>
             {openBox === "box2" && (
               <div className="dropdown-links">
-                <Link to="/addStore">➕ Add Store</Link>
-                <Link to="/getStore">👁 View Stores</Link>
+                <Link to="/registerAdmin">➕ Add admin</Link>
+                <Link to="/viewAdmin">👁 View Admins</Link>
               </div>
             )}
           </div>
 
           {/* Box 3 */}
           <div className="dashboard-box" onClick={() => toggleBox("box3")}>
-            <h2>Ratings</h2>
+            <h2>User Control</h2>
             {openBox === "box3" && (
               <div className="dropdown-links">
-                <Link to="/ratings/add">➕ Add Rating</Link>
-                <Link to="/shopRatings">👁 View Ratings</Link>
+                <Link to="/registerUser">➕ Add Users</Link>
+                <Link to="/viewUser">👁 View Users</Link>
               </div>
             )}
           </div>

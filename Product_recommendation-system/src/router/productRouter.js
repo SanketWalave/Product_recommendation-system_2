@@ -34,7 +34,6 @@
 
 // export default router;
 
-
 import express from "express";
 import multer from "multer";
 import * as productcontroler from "../controler/productControl.js";
@@ -54,36 +53,41 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // 🟢 Public routes
-router.get("/viewProducts",  productcontroler.viewProducts);
+//  done 
+router.get("/viewProducts", productcontroler.viewProducts);
 router.get("/getSubCategoriesNameId", productcontroler.getSubCategories);
 
-// 🔒 Protected routes (login required)
+// 🔒 Protected routes done
 router.post(
   "/addProduct_2",
-  verifyToken,        // user must be logged in
-  verifyAdmin,        // user must also be admin
-  upload.single("product_image"),
+  verifyToken,
+  verifyAdmin,
+  upload.single("product_image"),   // ✅ use consistent field
   productcontroler.addProduct_2
 );
 
+// done 
 router.get(
   "/deleteProduct",
- 
+  verifyToken,
+  verifyAdmin,
   productcontroler.deleteProduct
 );
-
+ 
+// done 
 router.get(
-  "/updateProduct",
+  "/getProductDetailsById",
   verifyToken,
   verifyAdmin,
-  productcontroler.updateProduct
+  productcontroler.getProductDetailsById
 );
 
+// done 
 router.post(
-  "/updateProduct",
+  "/updateProductPost",
   verifyToken,
   verifyAdmin,
-  upload.single("productImage"),
+  upload.single("product_image"),   // ✅ changed to match addProduct_2
   productcontroler.updateProductPost
 );
 

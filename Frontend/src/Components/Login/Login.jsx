@@ -8,7 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -17,44 +17,43 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Step 1: Login user
       const response = await loginService(email, password);
-
       const token = response.data.token;
-      // const loginUser = response.data.user; // ✅ renamed to avoid shadowing
 
+      // Step 2: Store token only
       localStorage.setItem("token", token);
-      // localStorage.setItem("user", JSON.stringify(loginUser));
 
-      // Fetch full user by token
-      getUserByToken(token)
-        .then((res) => {
+      // Step 3: Wait for 2 seconds (simulate loading/checking role)
+      setTimeout(async () => {
+        try {
+          // Step 4: Verify token with backend
+          const res = await getUserByToken(token);
           const fetchedUser = res.data.user;
-          console.log("User details:", fetchedUser);
 
-          setUser(fetchedUser);
-          localStorage.setItem("user", JSON.stringify(fetchedUser));
+          console.log("Fetched user:", fetchedUser);
 
-          // ✅ Navigate after we know the role
+          // Step 5: Navigate based on role
           if (fetchedUser.urole === "admin") {
             navigate("/adminDashbord");
           } else {
             navigate("/userDashbord");
           }
-        })
-        .catch((err) => {
-          console.error("Error fetching user:", err);
-          setError("Failed to fetch user details");
-        });
+        } catch (err) {
+          console.error("Error fetching user by token:", err);
+          setError("Failed to verify user role ❌");
+        } finally {
+          setLoading(false);
+        }
+      }, 2000); // 2 second delay
     } catch (err) {
       setError(err.response?.data?.message || "Login failed ❌");
-    } finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="login-wrapper">
-      <p>{user?.urole}</p>
       <div className="login-box">
         <h2>Login</h2>
         <form onSubmit={handleSubmit}>
@@ -73,11 +72,11 @@ const Login = () => {
             required
           />
           <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Checking role..." : "Login"}
           </button>
           <br />
           <p>
-            <Link to="/signUpUser">SignUp</Link>
+            <Link to="/registerUser">SignUp</Link>
           </p>
         </form>
         {error && <p className="error">{error}</p>}

@@ -8,6 +8,11 @@ import Login from './Components/Login/Login'
 import AdminDashboard from './Components/Admin/AdminDashbord'
 import UserDashboard from './Components/User/UserDashboard'
 import Error404 from './Components/Errors/Error404'
+import UpdateProduct from './Components/products/UpdateProduct'
+import RegisterUser from './Components/User/RegisterUser'
+import RegisterAdmin from './Components/Admin/RegisterAdmin'
+import AdminList from './Components/Admin/AdminList'
+import UserList from './Components/Admin/UserList'
 // import UpdateProduct from './Components/products/UpdateProduct'
 
 const App = () => {
@@ -37,13 +42,17 @@ const App = () => {
     <Routes>
       <Route path="/" element={<ShopPage></ShopPage>} />
       <Route path="/login" element={<Login></Login>} />
+      <Route path="/registerUser" element={<RegisterUser></RegisterUser>} />
+      <Route path="/registerAdmin" element={<RegisterAdmin></RegisterAdmin>} />
+      <Route path="/viewAdmin" element={<AdminList></AdminList>} />
+      <Route path="/viewUser" element={<UserList></UserList>} />
       <Route path="/adminDashbord" element={<AdminDashboard></AdminDashboard>} />
       <Route path="/addProducts" element={<AddProduct></AddProduct>} />
       <Route path="/viewProducts" element={<Product></Product>} />
       <Route path="/userDashbord" element={<UserDashboard></UserDashboard>} />
       {/* <Route path="/updateProduct" element={<UpdateProduct></UpdateProduct>} /> */}
 
-
+      <Route path="/updateProduct/:id" element={<UpdateProduct />} />
 
 
       <Route path="*" element={<Error404></Error404>} />

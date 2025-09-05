@@ -35,7 +35,7 @@ export const userLogin = (req, res) => {
         id: user.user_id,
         uname: user.user_name,
         email: user.user_email,
-        role: user.user_type,
+        urole: user.user_type,
       };
 
       // Generate JWT
@@ -85,15 +85,15 @@ export const getUserByToken = (req, res) => {
 
 // Register User
 export const registerUser = (req, res) => {
-  const { username, useremail, userpassword, usertype } = req.body;
+  const { user_name, user_email, user_password, user_type } = req.body;
 
-  // Use bcrypt.hash with .then() instead of await
-  bcrypt.hash(userpassword, 10)
+  bcrypt.hash(user_password, 10)
     .then((hashedPassword) => {
-      return model.registerUser(username, useremail, hashedPassword, usertype);
+      return model.registerUser(user_name, user_email, hashedPassword, user_type);
     })
     .then((result) => {
       res.status(200).json({
+        success: true,
         message: "User registered successfully",
         data: result
       });
@@ -101,6 +101,7 @@ export const registerUser = (req, res) => {
     .catch((err) => {
       console.error("Error registering user:", err);
       res.status(500).json({
+        success: false,
         message: "Error registering user",
         error: err
       });
@@ -109,27 +110,43 @@ export const registerUser = (req, res) => {
 
 
 export const deleteUserbyEmailAnsPassword = (req, res) => {
-//  const { user_email, password } = req.query;
-const { email, password } = req.query;
+  const { user_id, user_email, password } = req.body;
 
-  // Log for debugging
-  console.log('Query parameters:', req.query);
-  console.log('email:', email, 'password:', password);
-
-  // Validate email and password
-  if (!email || !password) {
-    return res.status(400).json({ message: 'email and password are required' });
+  // Validate input
+  if (!user_email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "❌ Email and password are required"
+    });
   }
-  model.deleteUserbyEmailAnsPassword(email, password)
+
+  model.deleteUserbyEmailAnsPassword(user_email, user_id)
     .then((result) => {
-      // res.status(200).json({ message: "user deleted", data: result });
-      res.redirect("/viewUsers"); // Redirect to viewUsers after deletion
+      if (result === "no data") {
+        return res.status(404).json({
+          success: false,
+          message: "⚠️ No user found with this email"
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "🗑️ User deleted successfully",
+        data: result
+      });
+      console.log("✅ Delete successful");
     })
     .catch((err) => {
-      console.error("Error registering user:", err);
-      res.status(500).json({ message: "Error deliting  user", error: err });
+      console.error("Error deleting user:", err);
+      res.status(500).json({
+        success: false,
+        message: "❌ Error deleting user",
+        error: err.message || err
+      });
     });
 };
+
+
 
 export const updateUserInfo = (req, res) => {
   res.render("updateUserInfo.ejs", {
@@ -141,30 +158,50 @@ export const updateUserInfo = (req, res) => {
 
 //adminProfile
 
-export const adminProfile = (req, res) => {
-  const user = req.session.user;
-  if (!user || user.user_type !== "admin") {
-    return res.status(403).send("Unauthorized");
-  }
+// export const adminProfile = (req, res) => {
+//   const user = req.session.user;
+//   if (!user || user.user_type !== "admin") {
+//     return res.status(403).send("Unauthorized");
+//   }
 
-  res.render("adminProfile", { admin: user });
-};
+//   res.render("adminProfile", { admin: user });
+// };
 
 
 //editAdminProfile
-export const editAdminProfile = (req, res) => {
-  const user = req.session.user;
-  res.render("updateAdmin", { admin: user }); // Make sure 'admin' is passed
-};
+// export const editAdminProfile = (req, res) => {
+//   const user = req.session.user;
+//   res.render("updateAdmin", { admin: user }); // Make sure 'admin' is passed
+// };
 
 export const updateAdminProfile = (req, res) => {
   console.log(req.body);
-  const { id, name, email } = req.body;
+  const { user_id, user_name, user_email } = req.body;
 
   // model.updateAdminProfile(user_id, user_name, user_email)
-  model.updateAdminProfile(id, name, email)
+  model.updateAdminProfile( user_id, user_name, user_email)
     .then((result) => {
-      res.redirect("/adminProfile"); // Or respond with JSON if API
+      // res.redirect("/adminProfile"); // Or respond with JSON if API
+       res.status(200).json({
+        success: true,
+      });
+    })
+    .catch((err) => {
+      console.error("Error updating user:", err);
+      res.status(500).json({ message: "Error updating user", error: err });
+    });
+};
+export const updateUserProfile = (req, res) => {
+  console.log(req.body);
+  const { user_id, user_name, user_email } = req.body;
+
+  // model.updateAdminProfile(user_id, user_name, user_email)
+  model.updateUserProfile( user_id, user_name, user_email)
+    .then((result) => {
+      // res.redirect("/adminProfile"); // Or respond with JSON if API
+       res.status(200).json({
+        success: true,
+      });
     })
     .catch((err) => {
       console.error("Error updating user:", err);
@@ -176,35 +213,61 @@ export const updateAdminProfile = (req, res) => {
 
 export const viewUsers = (req, res) => {
   model.viewUsers()
-    .then((users) => {
-      res.render("viewUser", { users }); // Pass users to EJS view
+   .then((users) => {
+      res.status(200).json({
+        success: true,
+        data: users
+      });
     })
     .catch((err) => {
-      console.error("Error fetching users:", err);
-      res.status(500).json({ message: "Error fetching users", error: err });
+      console.error("Error fetching user:", err);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching user",
+        error: err
+      });
     });
 }
+
+
+export const viewAdmin = (req, res) => {
+  model.viewAdmin()
+    .then((admin) => {
+      res.status(200).json({
+        success: true,
+        data: admin
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching admins:", err);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching admins",
+        error: err
+      });
+    });
+};
 
 
 export const registerAdmin=(req,res)=>{
    const { user_name, user_email, user_password, user_type } = req.body;
-  model.registerUser(user_name, user_email, user_password, user_type)
+ bcrypt.hash(user_password, 10)
+    .then((hashedPassword) => {
+      return model.registerUser(user_name, user_email, hashedPassword, user_type);
+    })
     .then((result) => {
-      res.status(200).json({ message: "User registered successfully", data: result });
+      res.status(200).json({
+        success: true,
+        message: "User registered successfully",
+        data: result
+      });
     })
     .catch((err) => {
       console.error("Error registering user:", err);
-      res.status(500).json({ message: "Error registering user", error: err });
+      res.status(500).json({
+        success: false,
+        message: "Error registering user",
+        error: err
+      });
     });
-}
-
-export const viewAdmin = (req, res) => {
-  model.viewUsers()
-    .then((users) => {
-      res.render("viewAdmin", { users }); // Pass admins to EJS view
-    })
-    .catch((err) => {
-      console.error("Error fetching admins:", err);
-      res.status(500).json({ message: "Error fetching admins", error: err });
-    });
-}
+};

@@ -22,8 +22,8 @@
 #   "description": "Devices and gadgets"
 # }
 
-#  GET http://localhost:3000/getSubCategoriesNameId
-#  Content-Type: application/json
+ GET http://localhost:3000/viewUsers
+ Content-Type: application/json
 
 
 # GET http://localhost:3000/deleteCatagoryById?id=14
@@ -89,13 +89,13 @@
 
 
 
-POST http://localhost:3000/userlogin
-Content-Type: application/json
+# POST http://localhost:3000/userlogin
+# Content-Type: application/json
 
-{
-  "email": "don@123",
-  "password": "1234"
-}
+# {
+#   "email": "don@123",
+#   "password": "1234"
+# }
 
 # GET http://localhost:3000/deleteProduct?product_id=28
 # Content-Type: application/json
