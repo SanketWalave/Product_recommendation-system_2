@@ -36,10 +36,10 @@ exports.getCatagorys = () => {
 };
 
 
-exports.viewSubCategory = () => {   
+exports.viewSubCategory = (category_id) => {   
     return new Promise((resolve, reject) => {
-        const sql = "SELECT * FROM subcategory";
-        db.query(sql, (err, results) => {
+        const sql = "SELECT * FROM subcategory where category_id=?";
+        db.query(sql,[category_id], (err, results) => {
             if (err) {
                 console.error("Error fetching sub-categories:", err);
                 reject(err);
@@ -51,10 +51,10 @@ exports.viewSubCategory = () => {
     });
 }
 
-exports.deleteSubCategoryById = (subCategoryId) => {
+exports.deleteSubCategoryById = (id) => {
     return new Promise((resolve, reject) => {
         const sql = "DELETE FROM subcategory WHERE subcategory_id = ?";
-        db.query(sql, [subCategoryId], (err, result) => {
+        db.query(sql, [id], (err, result) => {
             if (err) {
                 console.error("Error deleting sub-category:", err);
                 reject(err);
@@ -81,11 +81,14 @@ exports.updateSubCategoryGetById = (subCategoryId) => {
     });
 }
 
-exports.updateSubCategoryPost = (subCategoryId, subCategoryName,catagoryId) => {
-    console.log("Updating sub-category with ID:", subCategoryId, "to name:", subCategoryName, "and category ID:", catagoryId);
+exports.updateSubCategoryPost = (subcategory_id, subcategory_name ) => {
+    console.log(subcategory_id+"     "+ subcategory_name);
     return new Promise((resolve, reject) => {
-        const sql = "UPDATE subcategory SET subcategory_name = ?,category_id=? WHERE subcategory_id = ?";
-        db.query(sql, [subCategoryName,catagoryId, subCategoryId], (err, result) => {
+        // const sql = "UPDATE subcategory SET subcategory_name = ? WHERE subcategory_id = ?";
+        // const sql = "UPDATE subcategory SET subcategory_name = ? WHERE subcategory_id = ?";
+        const sql = "UPDATE subcategory SET subcategory_name = ? WHERE subcategory_id = ?";
+
+        db.query(sql, [subcategory_name,subcategory_id ], (err, result) => {
             if (err) {
                 console.error("Error updating sub-category:", err);
                 reject(err);
@@ -93,6 +96,21 @@ exports.updateSubCategoryPost = (subCategoryId, subCategoryName,catagoryId) => {
                 console.log("Sub-category updated successfully:", result);
                 resolve(result);
             }
+        });
+    });
+}
+
+exports.getProductBySubcategory = (subcategory_id) => {
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT * FROM products_2 WHERE subcategory_id = ?";
+        db.query(sql, [subcategory_id], (err, results) => {
+            if (err) {
+                console.error("Error fetching products by sub-category:", err);
+                reject(err);
+            } else {
+                console.log("Products fetched successfully by sub-category:", results);
+                resolve(results);
+            }   
         });
     });
 }

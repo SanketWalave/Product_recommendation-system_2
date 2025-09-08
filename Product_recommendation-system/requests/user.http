@@ -1,0 +1,36 @@
+#  GET http://localhost:3000/user/getBstOffers
+#  Content-Type: application/json
+# GET http://localhost:3000/user/getCatagory
+# Content-Type: application/json
+
+#  post http://localhost:3000/user/deleteOrderById
+#  Content-Type: application/json
+
+#  {
+#     "order_id": "1"
+#  }
+
+# post http://localhost:3000/user/addOrder
+#  Content-Type: application/json
+
+#  {
+#    "user_id": "9",
+#    "total_amount": "5000"
+   
+#  }
+
+#  get http://localhost:3000/user/getProductById
+#     Content-Type: application/json
+    
+#     {
+#     "product_id": "13"
+#     }
+
+    post http://localhost:3000/user/getViewAction
+        Content-Type: application/json
+        
+        {
+           "user_id": "28"
+        }
+
+        # GET http://localhost:3000/user/getViewAction?user_id=28

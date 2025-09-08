@@ -1,245 +1,345 @@
-import React, { useEffect, useState } from "react";
-import { viewProducts, getSubCategoriesNameId } from "../services/services";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  getCategory,
+  getSubCategory,
+  getProducts,
+  addToCart,
+  addViewAction,
+  addAddToCartAction,
+} from "../services/userServices";
+import { getUserByToken } from "../services/services";
+import "./ShopPage.css";
 
 const ShopPage = () => {
-  const [products, setProducts] = useState([]);
+  const [user, setUser] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
-  const navigate=useNavigate();
-  useEffect(() => {
-    // ✅ Fetch subcategories
-    getSubCategoriesNameId()
-      .then((res) => {
-        if (res && res.data && Array.isArray(res.data.data)) {
-          setSubCategories(res.data.data);
-        } else {
-          setSubCategories([]);
-        }
-      })
-      .catch((err) => console.error("Error fetching subcategories:", err));
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
-    // ✅ Fetch products
-    viewProducts()
-      .then((res) => {
-        if (res && res.data && Array.isArray(res.data.data)) {
-          setProducts(res.data.data);
-        } else {
-          setProducts([]);
-        }
-      })
-      .catch((err) => console.error("Error fetching products:", err));
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const dropdownRef = useRef(null);
+
+  // fetch user
+  useEffect(() => {
+    if (!token) return;
+    getUserByToken(token)
+      .then((res) => setUser(res.data.user))
+      .catch(() => {
+        localStorage.removeItem("token");
+        setUser(null);
+      });
+  }, [token]);
+
+  // fetch categories, subcategories, products
+  useEffect(() => {
+    (async () => {
+      try {
+        const cats = await getCategory();
+        setCategories(cats.data);
+
+        const subs = await getSubCategory();
+        setSubCategories(subs.data);
+
+        const prods = await getProducts();
+        setProducts(prods.data);
+        setFilteredProducts(prods.data);
+      } catch (err) {
+        console.error("❌ Error fetching initial data", err);
+      }
+    })();
   }, []);
 
-  // ✅ Filter by search
-  const filteredProducts = products.filter((p) =>
-    p.product_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // search
+  useEffect(() => {
+    if (!search.trim()) {
+      setFilteredProducts(products);
+      return;
+    }
+    const lower = search.toLowerCase();
+    const results = products.filter(
+      (p) =>
+        p.product_name?.toLowerCase().includes(lower) ||
+        categories.find(
+          (c) =>
+            c.category_name?.toLowerCase().includes(lower) &&
+            subCategories.some(
+              (s) =>
+                s.category_id === c.category_id &&
+                s.subcategory_id === p.subcategory_id
+            )
+        ) ||
+        subCategories.find(
+          (s) =>
+            s.subcategory_name?.toLowerCase().includes(lower) &&
+            s.subcategory_id === p.subcategory_id
+        )
+    );
+    setFilteredProducts(results);
+  }, [search, products, categories, subCategories]);
 
-  // ✅ Products for selected subcategory
-  const filteredBySubCategory = selectedSubCategory
-    ? filteredProducts.filter((p) => p.subcategory_id === selectedSubCategory)
-    : [];
+  // close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowProfileDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  // ✅ Remaining products (exclude selected subcategory ones)
-  const remainingProducts = selectedSubCategory
-    ? filteredProducts.filter((p) => p.subcategory_id !== selectedSubCategory)
-    : filteredProducts;
-
-  // ✅ Utility: calculate final price
-  const getFinalPrice = (price, discount) => {
-    return discount > 0 ? (price - (price * discount) / 100).toFixed(2) : price;
-  };
-  const login=()=>{
-      navigate("/login")
+  // add to cart
+  function addCart(product_id) {
+    if (!user) return setShowLoginPopup(true);
+    addToCart({ user_id: user.user_id, product_id, quantity: 1 })
+      .then(() => {
+        alert("✅ Added to cart!");
+        addAddToCartAction(user.user_id, product_id).catch((err) =>
+          console.error("❌ Logging add-to-cart action failed:", err)
+        );
+      })
+      .catch((err) => console.error("❌ Add to cart failed:", err));
   }
-   const loginBycart=()=>{
-    alert("you need to login first")
-      navigate("/login")
+
+  // wishlist
+  function addWishlist(product_id) {
+    if (!user) return setShowLoginPopup(true);
+    addViewAction({ user_id: user.user_id, product_id })
+      .then(() => alert("✅ Added to wishlist!"))
+      .catch((err) => console.error("❌ Add to wishlist failed:", err));
+  }
+
+  // navigation helpers
+  function goToCart() {
+    if (!user) return setShowLoginPopup(true);
+    navigate(`/cart?user_id=${user.user_id}`);
+  }
+  function goToWishlist() {
+    if (!user) return setShowLoginPopup(true);
+    navigate(`/wishlist?user_id=${user.user_id}`);
+  }
+  function goToRecommendations() {
+    if (!user) return setShowLoginPopup(true);
+    navigate(`/recommendations?user_id=${user.user_id}`);
+  }
+  function goToOffers() {
+    navigate(`/offers`);
+  }
+  function goToProduct(product_id) {
+    navigate(`/productShop/${product_id}`);
+  }
+  function logout() {
+    localStorage.removeItem("token");
+    setUser(null);
+    navigate("/login");
+  }
+
+  // filters
+  function handleCategoryClick(category_id) {
+    setSelectedCategory(category_id);
+    setSelectedSubCategory(null);
+    if (!category_id) return setFilteredProducts(products);
+    setFilteredProducts(
+      products.filter((p) =>
+        subCategories.some(
+          (s) =>
+            s.subcategory_id === p.subcategory_id &&
+            s.category_id === category_id
+        )
+      )
+    );
+  }
+
+  function handleSubCategoryClick(subcategory_id) {
+    setSelectedSubCategory(subcategory_id);
+    if (!subcategory_id) return handleCategoryClick(selectedCategory);
+    setFilteredProducts(
+      products.filter((p) => p.subcategory_id === subcategory_id)
+    );
   }
 
   return (
-    <div>
+    <div className="dashboard">
       {/* Navbar */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-        <div className="container-fluid">
-          <a className="navbar-brand fw-bold" href="#">
-            MyShop
-          </a>
-          <div className="d-flex ms-auto">
-            <button className="btn btn-outline-light me-2">🛒 Cart</button>
-            <button className="btn btn-danger" onClick={login}>Login</button>
+      <div className="navbar">
+        <div className="logo">Perfect</div>
+
+        <input
+          type="text"
+          placeholder="Search products, category..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="searchbar"
+        />
+
+        <div className="nav-icons">
+          <div className="nav-item" onClick={goToCart}>
+            <span className="icon">🛒</span>
+            <span className="label">Cart</span>
           </div>
-        </div>
-      </nav>
 
-      {/* Search bar */}
-      <div className="container my-4">
-        <div className="input-group mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search for products..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button className="btn btn-primary">🔍</button>
-        </div>
-      </div>
+          <div className="nav-item" onClick={goToWishlist}>
+            <span className="icon">❤️</span>
+            <span className="label">Wishlist</span>
+          </div>
 
-      {/* Subcategories */}
-      <div className="container mb-4 text-center">
-        {subCategories.length > 0 ? (
-          subCategories.map((sub) => (
-            <button
-              key={sub.subcategory_id}
-              className={`btn mx-2 ${
-                selectedSubCategory === sub.subcategory_id
-                  ? "btn-info"
-                  : "btn-outline-info"
-              }`}
-              onClick={() =>
-                setSelectedSubCategory(
-                  selectedSubCategory === sub.subcategory_id
-                    ? null
-                    : sub.subcategory_id
-                )
-              }
+          <div className="nav-item" onClick={goToRecommendations}>
+            <span className="icon">⭐</span>
+            <span className="label">Recs</span>
+          </div>
+
+          <div className="nav-item" onClick={goToOffers}>
+            <span className="icon">💰</span>
+            <span className="label">Offers</span>
+          </div>
+
+          {/* Profile */}
+          <div className="nav-item profile" ref={dropdownRef}>
+            <span
+              className="icon profile-icon"
+              onClick={() => {
+                if (!user) {
+                  navigate("/login"); // open login if not logged in
+                } else {
+                  setShowProfileDropdown((prev) => !prev);
+                }
+              }}
             >
-              {sub.subcategory_name}
-            </button>
-          ))
-        ) : (
-          <p className="text-muted">No subcategories available</p>
-        )}
-      </div>
+              {user ? user.uname?.[0]?.toUpperCase() : "🔑"}
+            </span>
+            <span className="label">{user ? user.uname : "Login"}</span>
 
-      {/* ✅ Selected subcategory products */}
-      {selectedSubCategory && (
-        <div className="container mb-5">
-          <h4 className="mb-3 text-primary">
-            Showing products from{" "}
-            {
-              subCategories.find(
-                (s) => s.subcategory_id === selectedSubCategory
-              )?.subcategory_name
-            }
-          </h4>
-          <div className="row g-4">
-            {filteredBySubCategory.length > 0 ? (
-              filteredBySubCategory.map((p) => (
-                <div key={p.product_id} className="col-md-3">
-                  <div className="card h-100 shadow-sm">
-                    <img
-                      src={`http://localhost:3000${p.product_image}`}
-                      className="card-img-top"
-                      alt={p.product_name}
-                      style={{ height: "200px", objectFit: "cover" }}
-                    />
-                    <div className="card-body">
-                      <h5 className="card-title">{p.product_name}</h5>
-                      {/* <p><strong>ID:</strong> {p.product_id}</p> */}
-                      <p>
-                        <strong>Brand:</strong> {p.brand}
-                      </p>
-                      <p>
-                        <strong>Description:</strong> {p.destcription}
-                      </p>
-                      <p>
-                        <strong>Subcategory ID:</strong> {p.subcategory_id}
-                      </p>
-                      <p>
-                        <strong>Stock:</strong> {p.stock} {p.stock_unit}
-                      </p>
-                      <p>
-                        <strong>Price:</strong> ₹{p.price}
-                      </p>
-                      <p>
-                        <strong>Discount:</strong> {p.discount}%
-                      </p>
-                      <p>
-                        <strong>Final Price:</strong> ₹
-                        {getFinalPrice(p.price, p.discount)}
-                      </p>
-                      <p>
-                        <strong>Organic:</strong>{" "}
-                        {p.organic === 1 ? "Yes" : "No"}
-                      </p>
-                    </div>
-                    <div className="card-footer text-center">
-                      <button className="btn btn-primary w-100" onClick={loginBycart}>
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted">No products in this subcategory.</p>
+            {user && showProfileDropdown && (
+              <div className="dropdown">
+                <button onClick={() => navigate("/profile")}>Edit Profile</button>
+                <button onClick={() => navigate("/change-password")}>
+                  Change Password
+                </button>
+                <button onClick={logout}>Logout</button>
+              </div>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Categories */}
+      <div className="filters">
+        <button
+          className={`filter-btn ${selectedCategory === null ? "active" : ""}`}
+          onClick={() => handleCategoryClick(null)}
+        >
+          All Categories
+        </button>
+        {categories.map((cat) => (
+          <button
+            key={cat.category_id}
+            onClick={() => handleCategoryClick(cat.category_id)}
+            className={`filter-btn ${
+              selectedCategory === cat.category_id ? "active" : ""
+            }`}
+          >
+            {cat.category_name}
+          </button>
+        ))}
+      </div>
+
+      {/* Subcategories */}
+      {selectedCategory && (
+        <div className="filters subfilter">
+          <button
+            className={`filter-btn ${
+              selectedSubCategory === null ? "active" : ""
+            }`}
+            onClick={() => handleSubCategoryClick(null)}
+          >
+            All
+          </button>
+          {subCategories
+            .filter((s) => s.category_id === selectedCategory)
+            .map((sub) => (
+              <button
+                key={sub.subcategory_id}
+                onClick={() => handleSubCategoryClick(sub.subcategory_id)}
+                className={`filter-btn ${
+                  selectedSubCategory === sub.subcategory_id ? "active" : ""
+                }`}
+              >
+                {sub.subcategory_name}
+              </button>
+            ))}
+        </div>
       )}
 
-      {/* ✅ All Products (excluding selected subcategory) */}
-      <div className="container">
-        <h4 className="mb-3">All Products</h4>
-        <div className="row g-4">
-          {remainingProducts.map((p) => (
-            <div key={p.product_id} className="col-md-3">
-              <div className="card h-100 shadow-sm">
-                <img
-                  src={`http://localhost:3000${p.product_image}`}
-                  className="card-img-top"
-                  alt={p.product_name}
-                  style={{ height: "200px", objectFit: "cover" }}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{p.product_name}</h5>
-                  <p>
-                    <strong>ID:</strong> {p.product_id}
-                  </p>
-                  <p>
-                    <strong>Brand:</strong> {p.brand}
-                  </p>
-                  <p>
-                    <strong>Description:</strong> {p.destcription}
-                  </p>
-                  <p>
-                    <strong>Subcategory ID:</strong> {p.subcategory_id}
-                  </p>
-                  <p>
-                    <strong>Stock:</strong> {p.stock} {p.stock_unit}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> ₹{p.price}
-                  </p>
-                  <p>
-                    <strong>Discount:</strong> {p.discount}%
-                  </p>
-                  <p>
-                    <strong>Final Price:</strong> ₹
-                    {getFinalPrice(p.price, p.discount)}
-                  </p>
-                  <p>
-                    <strong>Organic:</strong> {p.organic === 1 ? "Yes" : "No"}
-                  </p>
-                </div>
-                <div className="card-footer text-center">
-                    <button className="btn btn-primary w-100" onClick={loginBycart}>
-                      Add to Cart
-                    </button>
-                </div>
-              </div>
+      {/* Products */}
+      <div className="products-grid">
+        {filteredProducts.map((p) => (
+          <div
+            key={p.product_id}
+            className="product-card"
+            onClick={() => goToProduct(p.product_id)}
+          >
+            {p.discount > 0 && (
+              <span className="discount">{p.discount}% OFF</span>
+            )}
+
+            <img
+              src={`http://localhost:3000${p.product_image}`}
+              alt={p.product_name}
+              className="product-img"
+            />
+
+            <h3>{p.product_name}</h3>
+            <p className="brand">{p.brand}</p>
+            <p className="price">
+              <span className="old">₹{p.price}</span>{" "}
+              <span className="new">
+                ₹{(p.price - (p.price * p.discount) / 100).toFixed(2)}
+              </span>
+            </p>
+
+            <div className="btn-group">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent navigation
+                  addCart(p.product_id);
+                }}
+              >
+                Add to Cart
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent navigation
+                  addWishlist(p.product_id);
+                }}
+              >
+                Wishlist
+              </button>
             </div>
-          ))}
-          {remainingProducts.length === 0 && (
-            <p className="text-center text-muted">No products found.</p>
-          )}
-        </div>
+          </div>
+        ))}
       </div>
+
+      {/* Login Popup */}
+      {showLoginPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h3>Login Required</h3>
+            <p>You need to login first to continue.</p>
+            <div className="popup-buttons">
+              <button onClick={() => navigate("/login")}>Go to Login</button>
+              <button onClick={() => setShowLoginPopup(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

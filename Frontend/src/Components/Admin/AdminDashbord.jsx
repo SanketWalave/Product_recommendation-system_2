@@ -14,20 +14,17 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/login"); // no token = redirect
+      navigate("/login");
       return;
     }
 
-    // ✅ Always fetch user fresh from backend
     getUserByToken(token)
       .then((res) => {
-        console.log("User details:", res.data.user);
         setUser(res.data.user);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching user:", err);
-        localStorage.removeItem("token"); // invalid token → logout
+      .catch(() => {
+        localStorage.removeItem("token");
         navigate("/login");
       });
   }, [token, navigate]);
@@ -42,7 +39,7 @@ const AdminDashboard = () => {
   };
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <h2 className="loading">Loading...</h2>;
   }
 
   return (
@@ -55,42 +52,39 @@ const AdminDashboard = () => {
             alt="Logo"
             className="navbar-logo"
           />
+          <h1 className="navbar-title">Admin Dashboard</h1>
         </div>
         <div className="navbar-right">
-          {/* Profile Dropdown */}
-          <div className="profile-wrapper">
-            <div
-              className="profile-icon"
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-            >
-              {user?.uname?.charAt(0).toUpperCase() || "U"}
-            </div>
-
-            {showProfileMenu && (
-              <div className="profile-dropdown">
-                <Link to="/editInfo">✏️ Edit Info</Link>
-                <Link to="/changePassword">🔑 Change Password</Link>
-                <button onClick={handleLogout}>🚪 Logout</button>
-              </div>
-            )}
+          <div
+            className="profile-icon"
+            onClick={() => setShowProfileMenu(!showProfileMenu)}
+          >
+            {user?.uname?.charAt(0).toUpperCase() || "U"}
           </div>
+          {showProfileMenu && (
+            <div className="profile-dropdown">
+              <p className="profile-name">{user?.uname}</p>
+              <Link to="/Adminprofile">Profile</Link>
+              {/* <Link to="/changePassword">🔑 Change Password</Link> */}
+              <button onClick={handleLogout}>🚪 Logout</button>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* 🔹 Welcome Section */}
       <div className="welcome">
-        <h3>Welcome {user?.uname} 👋</h3>
-        <h3>Email: {user?.email}</h3>
-        <h3>Role: {user?.urole}</h3>
+        <h2>Welcome back, {user?.uname} 👋</h2>
+        <p>Email: {user?.email}</p>
+        <p>Role: {user?.urole}</p>
       </div>
 
       {/* 🔹 Dashboard */}
       <div className="dashboard-container">
-
         <div className="dashboard-grid">
-          {/* Box 1 */}
-          <div className="dashboard-box" onClick={() => toggleBox("box1")}>
-            <h2>Products</h2>
+          {/* Products */}
+          <div className="dashboard-card" onClick={() => toggleBox("box1")}>
+            <h2>📦 Products</h2>
             {openBox === "box1" && (
               <div className="dropdown-links">
                 <Link to="/addProducts">➕ Add Products</Link>
@@ -99,35 +93,44 @@ const AdminDashboard = () => {
             )}
           </div>
 
-          {/* Box 2 */}
-          <div className="dashboard-box" onClick={() => toggleBox("box2")}>
-            <h2>Admins</h2>
+          {/* Admins */}
+          <div className="dashboard-card" onClick={() => toggleBox("box2")}>
+            <h2>👨‍💼 Admins</h2>
             {openBox === "box2" && (
               <div className="dropdown-links">
-                <Link to="/registerAdmin">➕ Add admin</Link>
+                <Link to="/registerAdmin">➕ Add Admin</Link>
                 <Link to="/viewAdmin">👁 View Admins</Link>
               </div>
             )}
           </div>
 
-          {/* Box 3 */}
-          <div className="dashboard-box" onClick={() => toggleBox("box3")}>
-            <h2>User Control</h2>
+          {/* Users */}
+          <div className="dashboard-card" onClick={() => toggleBox("box3")}>
+            <h2>🙍 Users</h2>
             {openBox === "box3" && (
               <div className="dropdown-links">
-                <Link to="/registerUser">➕ Add Users</Link>
+                <Link to="/registerUser">➕ Add User</Link>
                 <Link to="/viewUser">👁 View Users</Link>
               </div>
             )}
           </div>
 
-          {/* Box 4 */}
-          <div className="dashboard-box" onClick={() => toggleBox("box4")}>
-            <h2>Reports</h2>
+          {/* Categories */}
+          <div className="dashboard-card" onClick={() => toggleBox("box4")}>
+            <h2>🗂 Categories</h2>
             {openBox === "box4" && (
               <div className="dropdown-links">
-                <Link to="/reports/add">➕ Add Report</Link>
-                <Link to="/reports/view">👁 View Reports</Link>
+                <Link to="/catagoryManager">👁 Manage Categories</Link>
+              </div>
+            )}
+          </div>
+
+          {/* Orders */}
+          <div className="dashboard-card" onClick={() => toggleBox("box5")}>
+            <h2>📑 Orders</h2>
+            {openBox === "box5" && (
+              <div className="dropdown-links">
+                <Link to="/Manageorders">👁 View Orders</Link>
               </div>
             )}
           </div>

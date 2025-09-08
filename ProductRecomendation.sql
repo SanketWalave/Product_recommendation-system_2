@@ -14,14 +14,7 @@ mysql> show tables;
 +--------------------------------------+
 7 rows in set (0.00 sec)
 
-mysql> desc actions;
-+-------------+--------------+------+-----+---------+----------------+
-| Field       | Type         | Null | Key | Default | Extra          |
-+-------------+--------------+------+-----+---------+----------------+
-| action_id   | int          | NO   | PRI | NULL    | auto_increment |
-| action_name | varchar(100) | NO   | UNI | NULL    |                |
-+-------------+--------------+------+-----+---------+----------------+
-2 rows in set (0.01 sec)
+
 
 mysql> desc categories;
 +---------------+--------------+------+-----+---------+----------------+
@@ -85,3 +78,59 @@ mysql> desc user_interactions;
 | action_id     | int  | YES  | MUL | NULL    |                |
 +---------------+------+------+-----+---------+----------------+
 4 rows in set (0.00 sec)
+
+
+mysql> desc actions;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| action_id   | int          | NO   | PRI | NULL    | auto_increment |
+| action_name | varchar(100) | NO   | UNI | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+2 rows in set (0.01 sec)
+
+mysql> desc cart;
++------------+-----------+------+-----+-------------------+-------------------+
+| Field      | Type      | Null | Key | Default           | Extra             |
++------------+-----------+------+-----+-------------------+-------------------+
+| cart_id    | int       | NO   | PRI | NULL              | auto_increment    |
+| user_id    | int       | NO   | MUL | NULL              |                   |
+| product_id | int       | NO   | MUL | NULL              |                   |
+| quantity   | int       | YES  |     | 1                 |                   |
+| added_at   | timestamp | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++------------+-----------+------+-----+-------------------+-------------------+
+5 rows in set (0.02 sec)
+
+mysql> desc orders;
++------------+----------------------------------------------------------+------+-----+-------------------+-------------------+
+| Field      | Type                                                     | Null | Key | Default           | Extra             |
++------------+----------------------------------------------------------+------+-----+-------------------+-------------------+
+| order_id   | int                                                      | NO   | PRI | NULL              | auto_increment    |
+| user_id    | int                                                      | NO   | MUL | NULL              |                   |
+| order_date | timestamp                                                | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
+| status     | enum('pending','paid','shipped','completed','cancelled') | YES  |     | pending           |                   |
+| total      | decimal(10,2)                                            | YES  |     | NULL              |                   |
++------------+----------------------------------------------------------+------+-----+-------------------+-------------------+
+5 rows in set (0.00 sec)
+
+mysql> desc order_items;
++---------------+---------------+------+-----+---------+----------------+
+| Field         | Type          | Null | Key | Default | Extra          |
++---------------+---------------+------+-----+---------+----------------+
+| order_item_id | int           | NO   | PRI | NULL    | auto_increment |
+| order_id      | int           | NO   | MUL | NULL    |                |
+| product_id    | int           | NO   | MUL | NULL    |                |
+| quantity      | int           | NO   |     | NULL    |                |
+| price         | decimal(10,2) | NO   |     | NULL    |                |
++---------------+---------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> select *from actions order by action_id ;
++-----------+---------------+
+| action_id | action_name   |
++-----------+---------------+
+|         1 | viewd         |
+|         2 | added_to_cart |
+|         3 | purchased     |
++-----------+---------------+
+3 rows in set (0.00 sec)

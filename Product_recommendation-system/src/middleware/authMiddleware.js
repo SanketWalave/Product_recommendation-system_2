@@ -26,3 +26,10 @@ export const verifyAdmin = (req, res, next) => {
   }
   next();
 };
+export const verifyUser = (req, res, next) => {
+  if (req.user.urole !== "user") {
+    console.log("role is "+req.user.urole);
+    return res.status(403).json({ message: "Admins only" });
+  }
+  next();
+};

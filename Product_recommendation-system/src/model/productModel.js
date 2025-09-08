@@ -5,7 +5,7 @@ import db from "../../db.js"
 
 export const getSubCategories = (req, res) => {
  return new Promise((resolve, reject) => {
-    const sql = "SELECT subcategory_id,subcategory_name FROM subcategory where subcategory_name IS NOT NULL AND subcategory_name != '' ";
+    const sql = "SELECT * FROM subcategory where subcategory_name IS NOT NULL AND subcategory_name != '' ";
     db.query(sql, (err, results) => { 
       if (err) {
         console.error("Error fetching subcategories:", err);
@@ -145,5 +145,51 @@ export const getProductDetailsById=(product_id)=>{
       }
       resolve(result);
     });
+  });
+};
+
+export const addProduct_2 = (
+  product_name,
+  product_image,
+  subcategory_id,
+  brand,
+  description,
+  stock_unit,
+  stock,
+  price,
+  discount,
+  organic
+) => {
+  return new Promise((resolve, reject) => {
+    const sql = `
+      INSERT INTO products_2
+        (product_name, product_image, subcategory_id, brand, destcription, stock_unit, stock, price, discount, organic)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(
+      sql,
+      [
+        product_name,
+        product_image,
+        subcategory_id,
+        brand,
+        description,
+        stock_unit,
+        stock,
+        price,
+        discount,
+        organic,
+      ],
+      (err, result) => {
+        if (err) {
+          console.error("Error adding product:", err);
+          reject(err);
+        } else {
+          console.log("Product added successfully:", result);
+          resolve(result);
+        }
+      }
+    );
   });
 };

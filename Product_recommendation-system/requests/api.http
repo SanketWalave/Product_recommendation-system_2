@@ -22,8 +22,8 @@
 #   "description": "Devices and gadgets"
 # }
 
- GET http://localhost:3000/viewUsers
- Content-Type: application/json
+#  GET http://localhost:3000/getAllOrders
+#  Content-Type: application/json
 
 
 # GET http://localhost:3000/deleteCatagoryById?id=14
@@ -41,12 +41,13 @@
 # }
 
 
-# POST http://localhost:3000/addSubCategory
+# POST http://localhost:3000/updatePassword
 # Content-Type: application/json
 
 # {
-#   "subcategory_name": "Food",
-#   "category_id": "10"
+#     "user_email": "don@123",
+#     "old_password": "1234",
+#     "new_password": "12345"
 # }
 
 # GET http://localhost:3000/addSubCategoryGet

@@ -23,10 +23,10 @@ exports.viewCatagory = () => {
     });
 }
 
-exports.deleteCatagoryById = (categoryId) => {
+exports.deleteCatagoryById = (category_id) => {
     return new Promise((resolve, reject) => {
         const sql = "DELETE FROM categories WHERE category_id = ?";
-        db.query(sql, [categoryId], (err, result) => {
+        db.query(sql, [category_id], (err, result) => {
             if (err) {
                 console.error("Error deleting category:", err);
                 reject(err);
@@ -53,7 +53,7 @@ exports.updateCatagoryGetById = (categoryId) => {
     });
 }
 
-exports.updateCatagoryPost = (categoryId, category_name, description) => {
+exports.updateCatagoryPostById = (categoryId, category_name, description) => {
     return new Promise((resolve, reject) => {
         const sql = "UPDATE categories SET category_name = ?, description = ? WHERE category_id = ?";
         db.query(sql, [category_name, description, categoryId], (err, result) => {

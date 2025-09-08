@@ -52,6 +52,13 @@ const Login = () => {
     }
   };
 
+  const handleGoHome = () => {
+    // ✅ Clear token (logout)
+    localStorage.removeItem("token");
+    // ✅ Navigate to home
+    navigate("/");
+  };
+
   return (
     <div className="login-wrapper">
       <div className="login-box">
@@ -74,7 +81,16 @@ const Login = () => {
           <button type="submit" disabled={loading}>
             {loading ? "Checking role..." : "Login"}
           </button>
-          <br />
+
+          {/* ✅ Go Home Button (logs out + navigates home) */}
+          <button
+            type="button"
+            className="home-btn"
+            onClick={handleGoHome}
+          >
+            🏠 Go Home
+          </button>
+
           <p>
             <Link to="/registerUser">SignUp</Link>
           </p>

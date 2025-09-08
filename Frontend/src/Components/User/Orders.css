@@ -1,0 +1,175 @@
+/* Page container */
+.orders-page {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 16px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+/* Header */
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.orders-header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.back-btn {
+  background: #475569;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #334155;
+}
+
+/* Each order card */
+.order-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.08);
+}
+
+.order-card h3 {
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  color: #1e293b;
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background: #fef9c3;
+  color: #b45309;
+}
+
+.status-badge.completed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* Order items list */
+.order-items {
+  margin-top: 12px;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto auto;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item .name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.order-item .desc {
+  color: #64748b;
+  font-size: 0.85rem;
+  align-self: center;
+}
+
+.order-item .qty {
+  text-align: right;
+  color: #1e293b;
+}
+
+.order-item .price {
+  text-align: right;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* Bill summary box */
+.bill-summary {
+  margin-top: 12px;
+  padding: 14px;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.bill-summary p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+}
+
+.bill-summary strong {
+  color: #0f172a;
+}
+
+.bill-summary .savings {
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 6px;
+}
+
+/* Delete button */
+.order-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.delete-btn {
+  background: #e11d48;
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #be123c;
+}
+
+.delete-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  color: #64748b;
+  font-size: 1rem;
+  margin-top: 40px;
+}

@@ -1,0 +1,54 @@
+.category-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.page-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.alert-box {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  background: #dff0d8;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.form-inline {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  margin-bottom: 20px;
+}
+
+.table-header {
+  background: #f8f9fa;
+  font-weight: bold;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.btn {
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}

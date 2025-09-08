@@ -91,18 +91,21 @@ router.get("/", controller.homePage);
 router.post("/userlogin", controller.userLogin);   
 // done
 router.post("/registerUser", controller.registerUser);
+
+router.post("/updatePassword", controller.updatePassword);  //done
 //done
 router.post("/registerAdmin",verifyToken, verifyAdmin, controller.registerAdmin);
 
 // ✅ Protected routes done
 router.get("/getUserByToken", verifyToken, controller.getUserByToken);
 // done but password varification problem 
-router.post("/deleteuserbyEmailAnsPassword", verifyToken, controller.deleteUserbyEmailAnsPassword);
+router.post("/deleteuserbyEmailAnsPassword", verifyToken, verifyAdmin,controller.deleteUserbyEmailAnsPassword);
 // done 
-router.get("/updateUserInfo", verifyToken, controller.updateUserInfo);
+router.get("/updateUserInfo", verifyToken, verifyAdmin, controller.updateUserInfo);
 
 // router.get("/adminProfile", verifyToken, verifyAdmin, controller.adminProfile);
 // router.get("/editAdminProfile", verifyToken, verifyAdmin, controller.editAdminProfile);
+router.post("/deleteUserById", verifyToken, verifyAdmin, controller.deleteUserById);
 // done 
 router.post("/updateAdminProfile", verifyToken, verifyAdmin, controller.updateAdminProfile);
 // done 
@@ -110,8 +113,10 @@ router.post("/updateUserProfile", verifyToken, verifyAdmin, controller.updateUse
 // verifyToken, verifyAdmin,
 // done
 router.get("/viewUsers", verifyToken, verifyAdmin, controller.viewUsers);
-// done 
+// done   
 router.get("/viewAdmin", verifyToken, verifyAdmin, controller.viewAdmin);
+router.get("/getAllOrders",verifyToken, verifyAdmin,   controller.getAllOrders);
+router.post("/editOrderStatus",verifyToken, verifyAdmin, controller.editOrderStatus);
 
 export default router;
 

@@ -90,7 +90,7 @@ export const deletProductById = (product_id) => {
 
 
 export const getProductDetailsById=(product_id)=>{
-  alert("in services id"+product_id);
+  // alert("in services id"+product_id);
   return api.get("/getProductDetailsById", {
     params: { product_id },
   });
@@ -131,5 +131,67 @@ export const updateUserProfile=(data)=>{
 
 }
 export const deleteUser=(user_id)=>{
-  return api.get("")
+  return api.post("/deleteUserById",{user_id});
 }
+
+
+export const addCategoryPost = (data) => {
+  return api.post("/addCategoryPost", data);
+};
+
+export const viewCatagory = () => {
+  return api.get("/viewCatagory");
+};
+
+export const deleteCatagoryById = (category_id) => {
+  alert("in services id   "+category_id);
+  return api.get("/deleteCatagoryById/",
+    { params: { category_id } }
+  );
+};
+
+export const updateCatagoryPostById = (category_id, data) => {
+  return api.post("/updateCatagoryPostById", { category_id, ...data });
+};
+
+
+// ✅ SubCategory Services
+export const addSubCategory = (data) => {
+  return api.post("/addSubCategory", data);
+};
+
+export const viewSubCategory = (category_id) => {
+  // console.log("in services", category_id);
+  return api.get("/viewSubCategory/",
+    { params: { category_id } }
+  );
+};
+
+export const deleteSubCategoryById = (id) => {
+  return api.get("/deleteSubCategoryById/",
+    { params: { id } }
+  );
+};
+
+export const updateSubCategoryPostById = ( data) => {
+  return api.post("/updateSubCategoryPostById", data);
+};
+
+export const getProductBySubcategory=(subcategory_id)=>{
+  // alert("in services"+ subcategory_id);
+  // return api.get("/getProductBySubcategory",{subcategory_id});
+  return api.get("/getProductBySubcategory/",
+    { params: { subcategory_id } }
+  );
+}
+
+
+export const getAllOrders = () => api.get("/getAllOrders");
+
+export const editOrder = (data) => api.post("/editOrderStatus", data);
+
+export const updatePassword = (data) => {
+  return api.post("/updatePassword", data);
+};
+
+

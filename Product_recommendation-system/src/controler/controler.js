@@ -61,8 +61,7 @@ export const userLogin = (req, res) => {
 
 export const getUserByToken = (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
-  console.log("Received token:", token);
-
+  // console.log("Received token:", token);
   model.getUserByToken(token)
     .then((result) => {
       if (result === "no data") {
@@ -268,6 +267,127 @@ export const registerAdmin=(req,res)=>{
         success: false,
         message: "Error registering user",
         error: err
+      });
+    });
+};
+
+export const deleteUserById = (req, res) => {
+  console.log("Request body:", req.body); // Debug log
+  const { user_id } = req.body; 
+  if (!user_id) {
+    return res.status(400).json({
+      success: false,
+      message: "User ID is required"
+    });
+  } 
+  model.deleteUserById(user_id)
+    .then((result) => {
+      if (result === "no data") { 
+        return res.status(404).json({
+          success: false,
+          message: "No user found with this ID"
+        });
+      } 
+      res.status(200).json({
+        success: true,
+        message: "User deleted successfully",
+        data: result
+      });
+    })
+    .catch((err) => {
+      console.error("Error deleting user:", err);
+      res.status(500).json({  
+        success: false,
+        message: "Error deleting user",
+        error: err.message || err
+      });
+    });
+}
+
+export const getAllOrders = (req, res) => {
+  model.getAllOrders()
+    .then((orders) => {
+      res.status(200).json({
+        success: true,
+        data: orders
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching orders:", err);
+      res.status(500).json({
+        success: false,
+        message: "Error fetching orders",
+        error: err
+      });
+    });
+}
+
+export const editOrderStatus = (req, res) => {
+  const { order_id, status } = req.body;
+  if (!order_id || !status) {
+    return res.status(400).json({
+      success: false,
+      message: "Order ID and status are required"
+    });
+  }
+  model.editOrderStatus(order_id, status)
+    .then((result) => {
+      res.status(200).json({  
+        success: true,
+        message: "Order status updated successfully",
+        data: result
+      });
+    })
+    .catch((err) => {
+      console.error("Error updating order status:", err);
+      res.status(500).json({
+        success: false,
+        message: "Error updating order status",
+        error: err.message || err
+      });
+    });
+};
+
+//update password
+export const updatePassword = (req, res) => {
+  const { user_email, old_password, new_password } = req.body;
+  if (!user_email || !old_password || !new_password) {
+    return res.status(400).json({
+      success: false,
+      message: "Email, old password, and new password are required"
+    });
+  }
+  model.getUserByMail(user_email)
+    .then((result) => {
+      if (result.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      let user = result[0];
+      console.log("User found:", user);
+      const isMatch = bcrypt.compareSync(old_password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ message: "Invalid old password" });
+      }
+      return bcrypt.hash(new_password, 10);
+    })
+    .then((hashedPassword) => {
+      return model.updatePassword(user_email, hashedPassword);
+    })
+    .then((result) => {
+      res.status(200).json({
+        success: true,
+        message: "Password updated successfully",
+        data: result
+      });
+    }
+    )
+    .catch((err) => {
+      console.error("Error updating password:", err);
+      res.status(500).json({
+        success: false,
+        message: "Error updating password",
+        error: err.message || err
       });
     });
 };

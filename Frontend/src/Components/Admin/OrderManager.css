@@ -1,0 +1,87 @@
+/* OrderManager.css */
+.orders-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.orders-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.orders-table th,
+.orders-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.orders-table th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+  color: #444;
+}
+
+.orders-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.orders-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.orders-table img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 8px;
+}
+
+.status-select {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.status-select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.status-pending {
+  color: orange;
+  font-weight: 600;
+}
+
+.status-paid {
+  color: green;
+  font-weight: 600;
+}
+
+.status-shipped {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.status-completed {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.status-cancelled {
+  color: red;
+  font-weight: 600;
+}

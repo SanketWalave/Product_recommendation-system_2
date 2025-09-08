@@ -7,6 +7,7 @@ import router from './router/router.js';
 import productRouter from './router/productRouter.js';
 import categoryRouter from './router/categoryRout.js';
 import subCategoryRouter from './router/SubCatagoryRouter.js';
+import userRouter from './router/userRouter.js';
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
@@ -53,6 +54,7 @@ app.use('/', router);
 app.use('/', productRouter); // Assuming productRouter handles product-related routes
 app.use('/', categoryRouter); // Assuming categoryRout handles category-related routes  
 app.use('/', subCategoryRouter); // Assuming SubCatagoryRouter handles sub-category-related routes
+app.use('/user', userRouter); // Assuming SubCatagoryRouter handles sub-category-related routes
 
 
 export default app;
