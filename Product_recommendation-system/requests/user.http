@@ -26,11 +26,11 @@
 #     "product_id": "13"
 #     }
 
-    post http://localhost:3000/user/getViewAction
+    get http://localhost:3000/user/getOrderDetails
         Content-Type: application/json
         
         {
-           "user_id": "28"
+           "user_id": "2"
         }
 
         # GET http://localhost:3000/user/getViewAction?user_id=28

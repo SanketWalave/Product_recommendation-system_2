@@ -142,7 +142,7 @@ export const getRecommendations = (req, res) => {
 };
 
 export const addOrder = (req, res) => {
-  console.log(req.body);
+  console.log("Order "+req.body);
   const { user_id, total_amount } = req.body;
   usermodel
     .addOrder(user_id, total_amount)

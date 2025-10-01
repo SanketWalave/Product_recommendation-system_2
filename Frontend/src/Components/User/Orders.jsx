@@ -14,23 +14,29 @@ const Orders = () => {
     if (!user_id) return;
     getOrders(user_id)
       .then((res) => {
+        console.log("Orders fetched:", res.data); // Log fetched orders
         setOrders(res.data || []);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error("Error fetching orders:", err); // Log fetch error
+      });
   }, [user_id]);
 
   const handleDeleteOrder = (orderId) => {
     if (window.confirm("Are you sure you want to delete this order?")) {
       deleteOrderById(orderId)
         .then(() => {
+          console.log(`Order ${orderId} deleted successfully`); // Log success
           alert("✅ Order deleted successfully!");
           setOrders((prev) => prev.filter((o) => o.order_id !== orderId));
         })
-        .catch((err) => console.error(err));
+        .catch((err) => {
+          console.error("Error deleting order:", err); // Log deletion error
+        });
     }
   };
 
-  // group products by order_id
+  // Group products by order_id
   const groupedOrders = orders.reduce((acc, item) => {
     if (!acc[item.order_id]) {
       acc[item.order_id] = {
@@ -44,6 +50,8 @@ const Orders = () => {
     acc[item.order_id].products.push(item);
     return acc;
   }, {});
+
+  console.log("Grouped orders to render:", groupedOrders); // Log grouped orders before render
 
   return (
     <div className="orders-page">
@@ -97,7 +105,7 @@ const Orders = () => {
                   <strong>₹{calculatedTotal.toFixed(2)}</strong>
                 </p>
                 <p>
-                   Bill After Discount:{" "}
+                  Bill After Discount:{" "}
                   <strong>₹{parseFloat(order.total).toFixed(2)}</strong>
                 </p>
               </div>

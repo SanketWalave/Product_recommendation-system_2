@@ -57,6 +57,7 @@ export const addOrder = (data) => {
 }
 
 export const getOrders = (user_id) => {
+  
   return api.get("/getOrderDetails", {
     params: { user_id }
   }); 

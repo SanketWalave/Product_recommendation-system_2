@@ -201,6 +201,8 @@ export const getRecommendations = (user_id) => {
 };
 
 export const addOrder = (user_id, total_amount) => {
+  console.log("asdfghjkl;asdfghjklsdfghjkl");
+  
   return new Promise((resolve, reject) => {
     const query =
       "INSERT INTO orders (user_id, status, total) VALUES (?, ?, ?)";
